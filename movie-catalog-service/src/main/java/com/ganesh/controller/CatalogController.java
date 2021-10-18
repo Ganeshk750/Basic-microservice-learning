@@ -1,5 +1,6 @@
 package com.ganesh.controller;
 
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import com.ganesh.model.CatalogItem;
 import com.ganesh.model.Movie;
 import com.ganesh.model.Rating;
+import com.ganesh.model.UserReating;
 
 @RestController
 @RequestMapping("/catalog")
@@ -25,13 +27,13 @@ public class CatalogController {
 	@RequestMapping("/{userId}")
 	public List<CatalogItem> getCatalog(@PathVariable("userId") String userId){
 		//return Collections.singletonList(new CatalogItem("Kick", "Action", 5));
-		
-		
-	 List<Rating> ratingsList = Arrays.asList(new Rating("1234", 4), new Rating("5678", 5));
+	
+		UserReating ratings = restTemplate
+				.getForObject("http://localhost:8003/ratingsdata/users/" + userId, UserReating.class);
 		
 	///	return ratingsList.stream().map(rating -> new CatalogItem("Kick", "Action", 5)).collect(Collectors.toList());
 	
-		return ratingsList.stream().map(rating -> {
+		return ratings.getRating().stream().map(rating -> {
             Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
             return new CatalogItem(movie.getName(), "Description", rating.getRating());
         })
