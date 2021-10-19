@@ -28,13 +28,14 @@ public class CatalogController {
 	public List<CatalogItem> getCatalog(@PathVariable("userId") String userId){
 		//return Collections.singletonList(new CatalogItem("Kick", "Action", 5));
 	
-		UserReating ratings = restTemplate
-				.getForObject("http://localhost:8003/ratingsdata/users/" + userId, UserReating.class);
+		//UserReating ratings = restTemplate.getForObject("http://localhost:8003/ratingsdata/users/" + userId, UserReating.class);
+		UserReating ratings = restTemplate.getForObject("http://ratings-data-service/ratingsdata/users/" + userId, UserReating.class);
 		
 	///	return ratingsList.stream().map(rating -> new CatalogItem("Kick", "Action", 5)).collect(Collectors.toList());
 	
 		return ratings.getRating().stream().map(rating -> {
-            Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
+            //Movie movie = restTemplate.getForObject("http://localhost:8082/movies/" + rating.getMovieId(), Movie.class);
+            Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
             return new CatalogItem(movie.getName(), "Description", rating.getRating());
         })
         .collect(Collectors.toList());
